@@ -1,46 +1,97 @@
 using MongoDB.Driver;
 using MongoDB.Bson;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Database;
 
-public class Controller {
+[ApiController]
+[Route("api/[controller]")]
+public class Controller : ControllerBase {
 
     private readonly DatabaseService _databaseService;
+    private readonly ILogger<Controller> _logger;
 
-    public Controller(DatabaseService databaseService) {
+    public Controller(DatabaseService databaseService, ILogger<Controller> logger) {
         _databaseService = databaseService;
+        _logger = logger;
     }
 
-    public async Task<List<ArtWork>> GetArtWorks() {
-        var artWorks = await _databaseService.ArtWorks.Find(new BsonDocument()).ToListAsync();
-        return artWorks;
+    [HttpGet]
+    public async Task<IActionResult> GetArtWorks() {
+        try {
+            _logger.LogInformation("Getting all artworks");
+            var artWorks = await _databaseService.ArtWorks.Find(new BsonDocument()).ToListAsync();
+
+            return Ok(artWorks);
+        }
+        catch(Exception e) {
+            _logger.LogError(e, "Error getting all artworks");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
-    public async Task<ArtWork> GetArtWorkById(int id) {
-        var artWork = await _databaseService.ArtWorks.Find(artWork => artWork.Id == id).FirstOrDefaultAsync();
-        return artWork;
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetArtWorkById(int id) {
+        try {
+            _logger.LogInformation($"Getting artwork with id {id}");
+            var artWork = await _databaseService.ArtWorks.Find(artWork => artWork.Id == id).FirstOrDefaultAsync();
+            if (artWork == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(artWork);
+        }
+        catch(Exception e) {
+            _logger.LogError(e, $"Error getting artwork with id {id}");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
-    public async Task<ArtWork> CreateArtWork(ArtWork artWork) {
-        await _databaseService.ArtWorks.InsertOneAsync(artWork);
-        return artWork;
+    [HttpPost]
+    public async Task<IActionResult> CreateArtWork(ArtWork artWork) {
+        try {
+            _logger.LogInformation($"Creating new artwork with id {artWork.Id}");
+            await _databaseService.ArtWorks.InsertOneAsync(artWork);
+
+            return CreatedAtAction(nameof(GetArtWorkById), new { id = artWork.Id }, artWork);
+        }
+        catch(Exception e) {
+            _logger.LogError(e, $"Error creating artwork with id {artWork.Id}");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
-    public async Task<ArtWork> UpdateArtWork(int id, ArtWork artWork) {
-        await _databaseService.ArtWorks.ReplaceOneAsync(artWork => artWork.Id == id, artWork);
-        return artWork;
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateArtWork(int id, ArtWork artWork) {
+        try {
+            _logger.LogInformation($"Updating artwork with id {id}");
+            await _databaseService.ArtWorks.ReplaceOneAsync(artWork => artWork.Id == id, artWork);
+
+            return NoContent();
+        }
+        catch(Exception e) {
+            _logger.LogError(e, $"Error updating artwork with id {id}");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
-    public async Task<ArtWork> DeleteArtWork(int id) {
-        var artWork = await _databaseService.ArtWorks.FindOneAndDeleteAsync(artWork => artWork.Id == id);
-        return artWork;
-    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteArtWork(int id) {
+        try {
+            _logger.LogInformation($"Deleting artwork with id {id}");
+            var artWork = await _databaseService.ArtWorks.FindOneAndDeleteAsync(artWork => artWork.Id == id);
+            if (artWork == null)
+            {
+                return NotFound();
+            }
 
-    public async Task<ArtWork> DeleteArtWork(ArtWork artWork) {
-        var deletedArtWork = await _databaseService.ArtWorks.FindOneAndDeleteAsync(artWork => artWork.Id == artWork.Id);
-        return deletedArtWork;
+            return Ok(artWork);
+        }
+        catch(Exception e) {
+            _logger.LogError(e, $"Error deleting artwork with id {id}");
+            return StatusCode(500, "Internal server error");
+        }
     }
-
 }
