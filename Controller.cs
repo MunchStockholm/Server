@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Database;
+namespace Server;
 
 [ApiController]
 [Route("api/[controller]")]

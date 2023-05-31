@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace Database;
+namespace Server;
 
 public class DatabaseService {
     private readonly IMongoDatabase _database;
