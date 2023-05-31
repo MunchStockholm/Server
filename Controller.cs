@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Server;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class Controller : ControllerBase {
 
     private readonly DatabaseService _databaseService;

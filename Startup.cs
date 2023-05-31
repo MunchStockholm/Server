@@ -9,14 +9,14 @@ public class Startup {
 
     public IConfiguration Configuration { get; }
     private readonly string connectionString;
-
+    
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
         connectionString = "mongodb+srv://" + 
             Environment.GetEnvironmentVariable("USER") + ":" + 
             Environment.GetEnvironmentVariable("PASSWORD") + "@" +
-            Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/";
+            Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority";
     }
 
     public void ConfigureServices(IServiceCollection services) {
