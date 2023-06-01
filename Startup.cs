@@ -16,7 +16,7 @@ public class Startup {
         connectionString = "mongodb+srv://" + 
             Environment.GetEnvironmentVariable("USER") + ":" + 
             Environment.GetEnvironmentVariable("PASSWORD") + "@" +
-            Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority";
+            Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority&connectTimeoutMS=60000&socketTimeoutMS=60000";
     }
 
     public void ConfigureServices(IServiceCollection services) {
