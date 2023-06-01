@@ -9,7 +9,7 @@ public class Startup {
 
     public IConfiguration Configuration { get; }
     private readonly string connectionString;
-    
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -21,16 +21,14 @@ public class Startup {
 
     public void ConfigureServices(IServiceCollection services) {
 
-        //string? connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
         if (string.IsNullOrEmpty(connectionString)) {
             throw new InvalidOperationException("Missing connection string in environment variables.");
         }
 
-        services.AddScoped<DatabaseService>(provider =>
+        services.AddSingleton<DatabaseService>(provider =>
             new DatabaseService(connectionString, "GrafittiWallDB"));
 
         services.AddControllers();
-        services.AddSingleton<DatabaseService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
