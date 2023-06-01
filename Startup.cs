@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Server;
 
@@ -32,10 +33,16 @@ public class Startup {
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-        app.UseHttpsRedirection();
-        app.UseRouting();
-
+        if (env.IsDevelopment()) {
+            app.UseDeveloperExceptionPage();
+        }
+        else {
+            app.UseHttpsRedirection();
+            app.UseHsts();
+        }
+        
         //app.UseAuthorization(); //can be fixed later
+        app.UseRouting();
 
         app.UseEndpoints(endpoints => {
             endpoints.MapControllers();
