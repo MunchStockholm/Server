@@ -1,0 +1,4 @@
+services:
+  your-service:
+    env_file:
+      - connection.env
