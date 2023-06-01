@@ -41,7 +41,6 @@ public class Startup {
             app.UseHsts();
         }
         
-        //app.UseAuthorization(); //can be fixed later
         app.UseRouting();
 
         app.UseEndpoints(endpoints => {
