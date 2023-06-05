@@ -14,10 +14,13 @@ public class Startup {
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+
+        
         connectionString = "mongodb+srv://" + 
             Environment.GetEnvironmentVariable("USER") + ":" + 
             Environment.GetEnvironmentVariable("PASSWORD") + "@" +
             Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority&connectTimeoutMS=120000&socketTimeoutMS=60000";
+            
     }
 
     public void ConfigureServices(IServiceCollection services) {

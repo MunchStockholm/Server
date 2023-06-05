@@ -18,7 +18,7 @@ public class Program {
             
             var artwork = new ArtWork
             {
-                Id = 1,
+                //Id = 1000,
                 ImageUrl = "https://www.munchmuseet.no/globalassets/kunstverk/madonna_crop.jpg",
                 ImageThumbnailUrl = "https://www.munchmuseet.no/globalassets/kunstverk/madonna_crop.jpg",
                 IsFeatured = true,
