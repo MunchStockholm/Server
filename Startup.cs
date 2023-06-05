@@ -32,6 +32,11 @@ public class Startup {
             throw new InvalidOperationException("Missing connection string in environment variables.");
         }
 
+        services.AddSingleton<DatabaseService>(provider =>
+            new DatabaseService(connectionString, "GrafittiWallDB"));
+
+        services.AddControllers();
+
         services.AddCors(options => {
             options.AddDefaultPolicy(builder => {
                 // Replace "http://localhost:3000" with the correct origin of your React app
@@ -40,11 +45,6 @@ public class Startup {
                     .AllowAnyMethod();
             });
         });
-
-        services.AddSingleton<DatabaseService>(provider =>
-            new DatabaseService(connectionString, "GrafittiWallDB"));
-
-        services.AddControllers();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
