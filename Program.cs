@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace Server;
 public class Program {
@@ -15,21 +16,24 @@ public class Program {
 
         try {
             var dbService = services.GetRequiredService<DatabaseService>();
+
+            // Tester å laste ned et bilde fra nettet og lagre det i databasen
+            string imageUrlString = "https://www.munchmuseet.no/globalassets/kunstverk/madonna_crop.jpg";
+            byte[] imageBytes = DownloadImageToByteArrayAsync(imageUrlString).Result;
             
             var artwork = new ArtWork
             {
-                //Id = 1000,
-                ImageUrl = "https://www.munchmuseet.no/globalassets/kunstverk/madonna_crop.jpg",
-                ImageThumbnailUrl = "https://www.munchmuseet.no/globalassets/kunstverk/madonna_crop.jpg",
+                ImageBytes = imageBytes,
+                ImageUrl = imageUrlString,
                 IsFeatured = true,
                 CreatedDate = DateTime.Now
             };
             
             dbService.ArtWorks.InsertOne(artwork);
         }
-        catch (Exception ex) {
+        catch (Exception e) {
             var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred creating the DB.");
+            logger.LogError(e, "An error occurred creating the DB.");
         }
         
         host.Run();
@@ -39,4 +43,11 @@ public class Program {
         Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => {
             webBuilder.UseStartup<Startup>();
     });
+
+    public static async Task<byte[]> DownloadImageToByteArrayAsync(string imageUrl) {
+        using HttpClient httpClient = new HttpClient();
+        byte[] imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+        return imageBytes;
+    }
 }

@@ -11,10 +11,10 @@ public class ArtWork
     public int Id { get; set; }
 
     [Required]
-    public string ImageUrl { get; set; } = null!;
-
+    public byte[] ImageBytes { get; set; } = null!;
+    
     [Required]
-    public string ImageThumbnailUrl { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
 
     [Required]
     public bool IsFeatured { get; set; }

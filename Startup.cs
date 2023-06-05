@@ -15,12 +15,6 @@ public class Startup {
     {
         Configuration = configuration;
 
-        
-        /*connectionString = "mongodb+srv://" + 
-            Environment.GetEnvironmentVariable("USER") + ":" + 
-            Environment.GetEnvironmentVariable("PASSWORD") + "@" +
-            Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority&connectTimeoutMS=120000&socketTimeoutMS=60000";
-        */
         string user = Environment.GetEnvironmentVariable("USER")!;
         string password = Environment.GetEnvironmentVariable("PASSWORD")!;
         string cluster = Environment.GetEnvironmentVariable("CLUSTER")!;
@@ -38,6 +32,15 @@ public class Startup {
             throw new InvalidOperationException("Missing connection string in environment variables.");
         }
 
+        services.AddCors(options => {
+            options.AddDefaultPolicy(builder => {
+                // Replace "http://localhost:3000" with the correct origin of your React app
+                builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
         services.AddSingleton<DatabaseService>(provider =>
             new DatabaseService(connectionString, "GrafittiWallDB"));
 
@@ -53,6 +56,7 @@ public class Startup {
             app.UseHsts();
         }
         
+        app.UseCors();
         app.UseRouting();
 
         app.UseEndpoints(endpoints => {
