@@ -16,11 +16,20 @@ public class Startup {
         Configuration = configuration;
 
         
-        connectionString = "mongodb+srv://" + 
+        /*connectionString = "mongodb+srv://" + 
             Environment.GetEnvironmentVariable("USER") + ":" + 
             Environment.GetEnvironmentVariable("PASSWORD") + "@" +
             Environment.GetEnvironmentVariable("CLUSTER") + ".mongodb.net/?retryWrites=true&w=majority&connectTimeoutMS=120000&socketTimeoutMS=60000";
-            
+        */
+        string user = Environment.GetEnvironmentVariable("USER")!;
+        string password = Environment.GetEnvironmentVariable("PASSWORD")!;
+        string cluster = Environment.GetEnvironmentVariable("CLUSTER")!;
+
+        if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(cluster)) {
+            throw new InvalidOperationException("One of the required environment variables is missing.");
+        }
+
+        connectionString = $"mongodb+srv://{user}:{password}@{cluster}.mongodb.net/?retryWrites=true&w=majority&connectTimeoutMS=120000&socketTimeoutMS=60000";
     }
 
     public void ConfigureServices(IServiceCollection services) {
